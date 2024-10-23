@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Team Assignment App</title>
+    <!-- Add viewport meta tag for responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         /* CSS Styles */
         body {
@@ -15,15 +17,18 @@
         h1 {
             color: #333;
             margin-top: 20px;
+            font-size: 2em;
         }
         #wave-buttons button {
-            padding: 10px 20px;
-            margin: 5px;
+            padding: 15px 30px;
+            margin: 10px 5px;
             background-color: #007bff;
             color: white;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            width: 120px;
         }
         #wave-buttons button:hover {
             background-color: #0056b3;
@@ -33,26 +38,72 @@
             margin-top: 20px;
         }
         input {
-            padding: 10px;
-            width: 300px;
-            margin-bottom: 10px;
-            font-size: 16px;
+            padding: 15px;
+            width: 80%;
+            max-width: 400px;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
         #find-button {
-            padding: 10px 20px;
+            padding: 15px 30px;
             background-color: #28a745;
             color: white;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1.2em;
+            border-radius: 5px;
         }
         #find-button:hover {
             background-color: #218838;
         }
         #result {
             margin-top: 20px;
-            font-size: 18px;
+            font-size: 1.2em;
             color: #333;
+            padding: 0 20px;
+        }
+        #teams-display {
+            margin-top: 30px;
+            text-align: left;
+            display: none;
+            padding: 0 20px;
+        }
+        .team-name {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-top: 20px;
+            color: #007bff;
+        }
+        .team-members {
+            margin-left: 20px;
+            font-size: 1em;
+            color: #333;
+        }
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8em;
+                margin-top: 15px;
+            }
+            #wave-buttons button {
+                padding: 15px 25px;
+                margin: 8px 4px;
+                font-size: 1.1em;
+                width: 100px;
+            }
+            input {
+                padding: 12px;
+                font-size: 1.1em;
+            }
+            #find-button {
+                padding: 12px 25px;
+                font-size: 1.1em;
+            }
+            #result, .team-name, .team-members {
+                font-size: 1.1em;
+            }
         }
     </style>
 </head>
@@ -68,6 +119,7 @@
         <button id="find-button" onclick="findTeam()">Find Team</button>
     </div>
     <div id="result"></div>
+    <div id="teams-display"></div>
 
     <script>
         // JavaScript Code
@@ -106,7 +158,7 @@
 
             "Nuno Perpetua": "Team Nairobi",
             "Miguel Sousa": "Team Nairobi",
-            "Mihaela Draghici": "Team Nairobi",
+            "Mihaella Draghici": "Team Nairobi",
             "Daniel Caetano": "Team Nairobi",
             "Ricardo Arruda": "Team Nairobi",
             "Rodolfo Pereira": "Team Nairobi",
@@ -128,7 +180,7 @@
             "Nadja Pirzadeh": "Team Helsinki",
             "Bruno Areal": "Team Helsinki",
             "Miguel Fernandes": "Team Helsinki",
-            "Inês Bento": "Team Helsinki"
+            "Inês Bento": "Team Helsinki",
             "Gonçalo Cândido": "Team Helsinki"
         };
 
@@ -147,7 +199,7 @@
             "Fábio Oliveira": "Team Stockholm",
             "Markus Heinze": "Team Stockholm",
             "Miguel Fernandes": "Team Stockholm",
-            "João Martins": "Team Stockholm"
+            "João Martins": "Team Stockholm",
 
             "Laura Carvoeira": "Team Oslo",
             "Catarina Santos": "Team Oslo",
@@ -161,7 +213,7 @@
             "Jackson Varjão": "Team Berlin",
             "Patrícia Rijo": "Team Berlin",
             "Rui Martins": "Team Berlin",
-            "Mihaela Draghici": "Team Berlin",
+            "Mihaella Draghici": "Team Berlin",
             "Sofia Fernandes": "Team Berlin",
 
             "Daniel Caetano": "Team Nairobi",
@@ -193,6 +245,7 @@
             const inputSection = document.getElementById("input-section");
             const resultDiv = document.getElementById("result");
             const nameInput = document.getElementById("nameInput");
+            const teamsDisplay = document.getElementById("teams-display");
 
             // Clear previous results and input
             resultDiv.textContent = "";
@@ -207,6 +260,45 @@
 
             // Show the input section
             inputSection.style.display = "block";
+
+            // Display teams and members
+            displayTeams();
+        }
+
+        // Function to display teams and members
+        function displayTeams() {
+            const teamsDisplay = document.getElementById("teams-display");
+            teamsDisplay.innerHTML = "";
+            teamsDisplay.style.display = "block";
+
+            // Organize members by team
+            const teams = {};
+            for (let member in teamAssignments) {
+                const team = teamAssignments[member];
+                if (!teams[team]) {
+                    teams[team] = [];
+                }
+                teams[team].push(member);
+            }
+
+            // Generate HTML content
+            for (let teamName in teams) {
+                const teamTitle = document.createElement("div");
+                teamTitle.className = "team-name";
+                teamTitle.textContent = teamName + ":";
+
+                const membersList = document.createElement("div");
+                membersList.className = "team-members";
+
+                teams[teamName].forEach(member => {
+                    const memberItem = document.createElement("div");
+                    memberItem.textContent = member;
+                    membersList.appendChild(memberItem);
+                });
+
+                teamsDisplay.appendChild(teamTitle);
+                teamsDisplay.appendChild(membersList);
+            }
         }
 
         // Function to normalize strings by removing accents, hyphens, and converting to lowercase
