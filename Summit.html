@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Team Assignment App</title>
+    <style>
+        /* CSS Styles */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #333;
+            margin-top: 20px;
+        }
+        #wave-buttons button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #wave-buttons button:hover {
+            background-color: #0056b3;
+        }
+        #input-section {
+            display: none;
+            margin-top: 20px;
+        }
+        input {
+            padding: 10px;
+            width: 300px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        #find-button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #find-button:hover {
+            background-color: #218838;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Find Your Team!</h1>
+    <div id="wave-buttons">
+        <button onclick="selectWave(1)">Wave 1</button>
+        <button onclick="selectWave(2)">Wave 2</button>
+    </div>
+    <div id="input-section">
+        <input type="text" id="nameInput" placeholder="Enter your name" />
+        <br>
+        <button id="find-button" onclick="findTeam()">Find Team</button>
+    </div>
+    <div id="result"></div>
+
+    <script>
+        // JavaScript Code
+
+        let selectedWave = null;
+        let teamAssignments = {};
+
+        // Team assignments for Wave 1
+        const teamAssignmentsWave1 = {
+            "Albertina Soares": "Team Tokyo",
+            "Joana Esteves": "Team Tokyo",
+            "Duarte Dias": "Team Tokyo",
+            "Sukhdeep Sodhi": "Team Tokyo",
+            "André Martins": "Team Tokyo",
+            "Marco Sarroeira": "Team Tokyo",
+
+            "Stefan Strehlow": "Team Stockholm",
+            "Markus Heinze": "Team Stockholm",
+            "Carlos Fernandes": "Team Stockholm",
+            "Laura Carvoeira": "Team Stockholm",
+            "Jackson Varjão": "Team Stockholm",
+            "Fábio Oliveira": "Team Stockholm",
+
+            "Rui Martins": "Team Oslo",
+            "Sofia Fernandes": "Team Oslo",
+            "Gilberto Pe-Curto": "Team Oslo",
+            "Ana Machado": "Team Oslo",
+            "João Carradinha": "Team Oslo",
+            "Luís Lima": "Team Oslo",
+
+            "João Oliveira": "Team Berlin",
+            "Ivo Ferreira": "Team Berlin",
+            "Andreia Pitti": "Team Berlin",
+            "Bruno Lourenço": "Team Berlin",
+            "Melissa De Leon": "Team Berlin",
+            "João Martins": "Team Berlin",
+
+            "Nuno Perpetua": "Team Nairobi",
+            "Miguel Sousa": "Team Nairobi",
+            "Mihaela Draghici": "Team Nairobi",
+            "Daniel Caetano": "Team Nairobi",
+            "Ricardo Arruda": "Team Nairobi",
+            "Rodolfo Pereira": "Team Nairobi",
+
+            "Bruno Ambrósio": "Team Lisboa",
+            "Sofia Sousa": "Team Lisboa",
+            "Marcelo Afonso": "Team Lisboa",
+            "Joana Martins": "Team Lisboa",
+            "Tiago Bilreiro": "Team Lisboa",
+            "Diogo Teixeira": "Team Lisboa",
+
+            "Catarina Santos": "Team Denver",
+            "Filipe Esteves": "Team Denver",
+            "João Martins": "Team Denver",
+            "Andre Santos": "Team Denver",
+            "Cristina Ribeiro": "Team Denver",
+
+            "Patrícia Rijo": "Team Helsinki",
+            "Nadja Pirzadeh": "Team Helsinki",
+            "Bruno Areal": "Team Helsinki",
+            "Miguel Fernandes": "Team Helsinki",
+            "Inês Bento": "Team Helsinki"
+        };
+
+        // Team assignments for Wave 2
+        const teamAssignmentsWave2 = {
+            "Gonçalo Cândido": "Team Tokyo",
+            "Marco Sarroeira": "Team Tokyo",
+            "Gilberto Pe-Curto": "Team Tokyo",
+            "Andre Santos": "Team Tokyo",
+            "Bruno Areal": "Team Tokyo",
+            "Carlos Fernandes": "Team Tokyo",
+            "Luís Lima": "Team Tokyo",
+
+            "Filipe Esteves": "Team Stockholm",
+            "Andreia Pitti": "Team Stockholm",
+            "Fábio Oliveira": "Team Stockholm",
+            "Markus Heinze": "Team Stockholm",
+            "Gonçalo Cândido": "Team Stockholm",
+            "Miguel Fernandes": "Team Stockholm",
+
+            "Laura Carvoeira": "Team Oslo",
+            "Catarina Santos": "Team Oslo",
+            "Melissa De Leon": "Team Oslo",
+            "Tiago Bilreiro": "Team Oslo",
+            "Stefan Strehlow": "Team Oslo",
+            "Sukhdeep Sodhi": "Team Oslo",
+
+            "Inês Bento": "Team Berlin",
+            "André Martins": "Team Berlin",
+            "Jackson Varjão": "Team Berlin",
+            "Patrícia Rijo": "Team Berlin",
+            "Rui Martins": "Team Berlin",
+            "Mihaela Draghici": "Team Berlin",
+            "Sofia Fernandes": "Team Berlin",
+
+            "Daniel Caetano": "Team Nairobi",
+            "Ana Machado": "Team Nairobi",
+            "Rodolfo Pereira": "Team Nairobi",
+            "Bruno Ambrósio": "Team Nairobi",
+            "Albertina Soares": "Team Nairobi",
+            "Diogo Teixeira": "Team Nairobi",
+
+            "Ricardo Arruda": "Team Lisboa",
+            "Marcelo Afonso": "Team Lisboa",
+            "Cristina Ribeiro": "Team Lisboa",
+            "Joana Esteves": "Team Lisboa",
+            "Miguel Sousa": "Team Lisboa",
+            "Nadja Pirzadeh": "Team Lisboa",
+            "Ivo Ferreira": "Team Lisboa",
+
+            "Joana Martins": "Team Denver",
+            "Duarte Dias": "Team Denver",
+            "João Carradinha": "Team Denver",
+            "Sofia Sousa": "Team Denver",
+            "Bruno Lourenço": "Team Denver",
+            "João Oliveira": "Team Denver",
+            "Nuno Perpetua": "Team Denver"
+        };
+
+        // Function to select the wave
+        function selectWave(waveNumber) {
+            const inputSection = document.getElementById("input-section");
+            const resultDiv = document.getElementById("result");
+            const nameInput = document.getElementById("nameInput");
+
+            // Clear previous results and input
+            resultDiv.textContent = "";
+            nameInput.value = "";
+
+            selectedWave = waveNumber;
+            if (selectedWave === 1) {
+                teamAssignments = teamAssignmentsWave1;
+            } else if (selectedWave === 2) {
+                teamAssignments = teamAssignmentsWave2;
+            }
+
+            // Show the input section
+            inputSection.style.display = "block";
+        }
+
+        // Function to normalize strings by removing accents, hyphens, and converting to lowercase
+        function normalizeString(str) {
+            return str
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/-/g, "")
+                .replace(/\s+/g, " ")
+                .trim()
+                .toLowerCase();
+        }
+
+        function findTeam() {
+            if (!selectedWave) {
+                alert("Please select a wave first.");
+                return;
+            }
+
+            const nameInput = document.getElementById("nameInput").value.trim();
+            const resultDiv = document.getElementById("result");
+
+            // Clear previous result
+            resultDiv.textContent = "";
+
+            // If no input, show an error message
+            if (nameInput === "") {
+                resultDiv.textContent = "Please enter a name.";
+                return;
+            }
+
+            // Normalize the user input
+            const normalizedInput = normalizeString(nameInput);
+
+            // Split the input into first and last names
+            const inputParts = normalizedInput.split(" ");
+            const inputFirstName = inputParts[0];
+            const inputLastName = inputParts.slice(1).join(" ");
+
+            let exactMatch = null;
+            let firstNameMatches = [];
+
+            for (let fullName in teamAssignments) {
+                const normalizedFullName = normalizeString(fullName);
+                const nameParts = normalizedFullName.split(" ");
+                const firstName = nameParts[0];
+                const lastName = nameParts.slice(1).join(" ");
+
+                // Check for exact match
+                if (normalizedFullName === normalizedInput) {
+                    exactMatch = fullName;
+                    break;
+                }
+
+                // Check for first name match
+                if (firstName === inputFirstName) {
+                    firstNameMatches.push(fullName);
+                }
+            }
+
+            if (exactMatch) {
+                // Exact match found
+                resultDiv.textContent = `You are in ${teamAssignments[exactMatch]}!`;
+            } else if (firstNameMatches.length > 0) {
+                // First name matches found, but last name doesn't match
+                resultDiv.textContent = `Multiple matches found for first name "${nameInput.split(" ")[0]}". Did you mean: ${firstNameMatches.join(", ")}?`;
+            } else {
+                // No matches found
+                resultDiv.textContent = "Name not found. Please try again.";
+            }
+        }
+    </script>
+</body>
+</html>
